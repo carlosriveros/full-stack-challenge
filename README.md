@@ -1,6 +1,6 @@
 
 
-###SETUP:
+### SETUP:
 
 Please begin by installing Docker.
 
@@ -33,7 +33,7 @@ To run the frontend server, run the following command
 
 ```npm run dev-serve```
 
-###DESIGN
+### DESIGN
 
 The backend of the app has two entities Employee and Review: 
 
