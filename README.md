@@ -53,6 +53,8 @@ apps functionality: They are employee.list.js and review.list.js
 The app uses React Router to navigate between those two. The other views are showing withing those two components
 using conditional logic.
 
+For Styling I used a lightweight CSS framework called muicss
+
 Had I had more time or had I not needed to implement a backend:
 * I would have created more react components and more routes to separate the UI into more functional components
 * I would have separated the CSS into stylesheets and added it to the bundle using webpack
