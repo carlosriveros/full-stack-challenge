@@ -153,7 +153,7 @@ class ReviewList extends Component {
 
             const value = employee.id  + " " + employee.name;
 
-            return (<option value={value}>{employee.name}</option>)
+            return (<option key={employee.id} value={value}>{employee.name}</option>)
         })
 
 
@@ -161,17 +161,28 @@ class ReviewList extends Component {
 
         if(this.state.selectedReview) {
 
+            console.log('selectedReview', this.state.selectedReview)
+
+            let name = this.state.selectedReview.review.reviewee.name;
 
 
             currentView = (<div>
 
-                <h2>Reviewee Name: {this.state.selectedReview.review.reviewee.name}</h2>
+                <a  onClick={()=> {
+                    this.setState({selectedReview: null})
+                }}> &lt; Return to Review List</a>
+
+                <h2>Reviewee Name: {name}</h2>
 
 
                 <h3>Write your review below.</h3>
                 <textarea style={styles.reviewEditBody} value={this.state.selectedReview.review.body} onChange={(e) => {
-                    this.setState({selectedReview: {review:{body:  e.target.value
-                    , id: this.state.selectedReview.review.id}}})
+                    this.setState({selectedReview:
+                        {review: {body:  e.target.value
+                                  ,id: this.state.selectedReview.review.id,
+                                    reviewee : this.state.selectedReview.review.reviewee }
+                        }
+                    })
                 }} placeholder="enter your review here"></textarea>
 
                 <h3>Select a reviewer.</h3>

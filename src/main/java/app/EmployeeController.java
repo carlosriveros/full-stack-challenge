@@ -45,18 +45,9 @@ public class EmployeeController {
             name = n.getName();
         }
 
-
-
         n.setName(name);
 
-        //Review r =  ReviewRepository.findOne(reviewId);
-
-      //  n.setReview(r);
-
         EmployeeRepository.save(n);
-
-        //r.setReviewee(n);
-       // ReviewRepository.save(r);
 
         return this.getAllEmployees();
     }
@@ -77,9 +68,6 @@ public class EmployeeController {
     @CrossOrigin(origins = "http://localhost:9010")
     @GetMapping(path="/delete")
     public @ResponseBody Iterable<Employee> deleteEmployee(@RequestParam Integer employeeId) {
-
-       // Employee e = EmployeeRepository.findOne(employeeId);
-
         EmployeeRepository.delete(employeeId);
         return this.getAllEmployees();
     }

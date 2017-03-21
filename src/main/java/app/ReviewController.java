@@ -49,8 +49,6 @@ public class ReviewController {
                                               @RequestParam(value = "revieweeId", required=false) Integer revieweeId, @RequestParam(value = "reviewerId", required=false) Integer reviewerId) {
 
 
-
-
         Employee reviewee = null;
         Employee reviewer = null;
 
@@ -96,6 +94,7 @@ public class ReviewController {
             EmployeeRepository.save(reviewer);
         }
 
+        ReviewRepository.save(n);
 
 
         return this.getAllReviews();
@@ -106,6 +105,4 @@ public class ReviewController {
     public @ResponseBody Iterable<Review> getAllReviews() {
         return ReviewRepository.findAll();
     }
-
-
 }
