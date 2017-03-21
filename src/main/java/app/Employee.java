@@ -5,6 +5,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import java.util.Set;
+
 import app.Review;
 
 @Entity
@@ -15,9 +25,24 @@ public class Employee {
 
     private String name;
 
-    private String email;
 
+    @ManyToMany(mappedBy = "assignedReviewers")
+    private Set<Review> assignedReviews;
+
+
+    // Serialize as a single value with the field "id"
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
+    // Serialize as told by @JsonIdentityInfo immediately (if false -> on second and further occurrences)
+    @JsonIdentityReference(alwaysAsId = true)
+
+    // Rename to "review_id" (would be "review" otherwise)
+    @JsonProperty(value = "review_id")
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "reviewee")
     private Review review;
+
 
     public Integer getId() {
         return id;
@@ -35,15 +60,6 @@ public class Employee {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @OneToOne(mappedBy = "reviewee")
     public Review getReview() {
         return review;
     }
@@ -52,5 +68,12 @@ public class Employee {
         this.review = review;
     }
 
+    public Set<Review> getAssignedReviews() {
+        return assignedReviews;
+    }
 
+    public void setAssignedReviews(Set<Review> assignedReviews) {
+        this.assignedReviews = assignedReviews;
+
+    }
 }

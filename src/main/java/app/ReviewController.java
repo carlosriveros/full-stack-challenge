@@ -13,6 +13,8 @@ import app.ReviewRepository;
 import app.Employee;
 import app.EmployeeRepository;
 
+import java.util.Set;
+
 @Controller
 @RequestMapping(path="reviews")
 public class ReviewController {
@@ -22,41 +24,88 @@ public class ReviewController {
     @Autowired
     private EmployeeRepository EmployeeRepository;
 
-    @CrossOrigin(origins = "http://localhost:9000")
+    @CrossOrigin(origins = "http://localhost:9010")
     @GetMapping(path="/add")
-    public @ResponseBody Review addNewReview () {
+    public @ResponseBody Review addNewReview (@RequestParam Integer revieweeId) {
+
+        Employee reviewee = EmployeeRepository.findOne(revieweeId);
 
         Review n = new Review();
         n.setBody("To Be Completed");
-        n.setCompleted('N');
+        n.setCompleted("N");
+        n.setReviewee(reviewee);
         ReviewRepository.save(n);
+
+        reviewee.setReview(n);
+        EmployeeRepository.save(reviewee);
+
         return n;
     }
 
-    @CrossOrigin(origins = "http://localhost:9000")
+    @CrossOrigin(origins = "http://localhost:9010")
     @GetMapping(path="/update")
-    public @ResponseBody Review updateReview (@RequestParam Integer reviewId, @RequestParam Integer employeeId
-            , @RequestParam String body, @RequestParam char completed) {
+    public @ResponseBody Iterable<Review> updateReview(@RequestParam Integer id, @RequestParam(value = "body", required=false) String body,
+                                              @RequestParam(value = "completed", required=false) String completed,
+                                              @RequestParam(value = "revieweeId", required=false) Integer revieweeId, @RequestParam(value = "reviewerId", required=false) Integer reviewerId) {
 
-        Review n = ReviewRepository.findOne(reviewId);
-        Employee e = EmployeeRepository.findOne(employeeId);
+
+
+
+        Employee reviewee = null;
+        Employee reviewer = null;
+
+        Review n = ReviewRepository.findOne(id);
+
+        if(body == null) {
+            body = n.getBody();
+        }
+
+
+
+        if(completed == null) {
+            completed = n.getCompleted();
+        }
+
+        System.out.println("body: " + body);
+        System.out.println("completed: " + completed);
+
         n.setBody(body);
         n.setCompleted(completed);
-        n.setRevieweeId(e.getId());
-        ReviewRepository.save(n);
-        return n;
+
+        if(revieweeId != null) {
+            reviewee = EmployeeRepository.findOne(revieweeId);
+            n.setReviewee(reviewee);
+        }
+
+        if(reviewerId != null) {
+            reviewer = EmployeeRepository.findOne(reviewerId);
+            Set<Employee> assignedReviewers = n.getAssignedReviewers();
+            assignedReviewers.add(reviewer);
+            ReviewRepository.save(n);
+        }
+
+        if(revieweeId != null) {
+            reviewee.setReview(n);
+            EmployeeRepository.save(reviewee);
+        }
+
+        if(reviewerId != null) {
+            Set<Review> assignedReviews = reviewer.getAssignedReviews();
+            assignedReviews.add(n);
+            reviewer.setAssignedReviews(assignedReviews);
+            EmployeeRepository.save(reviewer);
+        }
+
+
+
+        return this.getAllReviews();
     }
 
-    @CrossOrigin(origins = "http://localhost:9000")
+    @CrossOrigin(origins = "http://localhost:9010")
     @GetMapping(path="/")
     public @ResponseBody Iterable<Review> getAllReviews() {
         return ReviewRepository.findAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:9000")
-    @GetMapping(path="/review")
-    public @ResponseBody Review getReview(@RequestParam Integer reviewId) {
-        Review r = ReviewRepository.findOne(reviewId);
-        return r;
-    }
+
 }

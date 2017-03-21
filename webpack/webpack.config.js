@@ -33,7 +33,7 @@ module.exports = {
     devServer: {
         contentBase: path.join(cwd, 'dist'),
         compress: true,
-        port: 9000
+        port: 9010
     },
     plugins: [
         new CleanWebpackPlugin([`${cwd}/dist`], {

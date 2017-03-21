@@ -2,8 +2,8 @@
  * Created by carlosriveros on 2017-03-13.
  */
 import React, {Component} from 'react'
-import Employees from './employee.list'
-import Reviews from './review.list'
+import Employees from './../components/employee.list'
+import Reviews from './../components/review.list'
 import App from './root'
 import { Router, Route, IndexRoute, hashHistory} from 'react-router'
 import createHistory from 'history/createBrowserHistory'
