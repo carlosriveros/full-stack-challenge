@@ -13,8 +13,8 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'gs-accessing-data-mysql'
-    version =  '0.1.0'
+    baseName = 'employee-review'
+    version =  ''
 }
 
 repositories {
