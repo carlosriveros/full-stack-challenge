@@ -41,7 +41,9 @@ The backend of the app has two entities Employee and Review:
 
 Employee which has the properties: Body, Completed, Reviewee, and Reviewees
 
+
 There is a OneToOne relationship between Employee.Review and Review.reviewee
+
 
 There is a ManyToMany relationship between Employee.assignedReviews and Review.reviewers
 
