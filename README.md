@@ -49,10 +49,11 @@ apps functionality: They are employee.list.js and review.list.js
 The app uses React Router to navigate between those two. The other views are showing withing those two components
 using conditional logic.
 
-Had I had more time or have I not needed to implement a backend:
+Had I had more time or had I not needed to implement a backend:
 * I would have created more react components and more routes
 * I would have separated the CSS into stylesheets and added it to the bundle using webpack
 * I would have used redux for better state management
+* I would have used created test coverage using Enzyme, Tape, and Sinon
 
 
 
