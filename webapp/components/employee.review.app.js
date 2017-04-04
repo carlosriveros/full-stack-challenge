@@ -4,8 +4,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {Appbar, Input, Button as MuiButton} from 'muicss/react';
-import Employees from './employee.list'
-import Reviews from './review.list'
 
 class Root extends Component {
     constructor(props) {
@@ -35,7 +33,7 @@ class Root extends Component {
             <Appbar>
 
                 <div style={styles.buttons}>
-                    <Link className="mui-btn mui-btn--raised" to="/employees">Employees</Link>
+                    <Link className="mui-btn mui-btn--raised" to="/">Employees</Link>
                     <Link className="mui-btn mui-btn--raised" to="/reviews">Reviews</Link>
                 </div>
 
