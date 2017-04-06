@@ -12,6 +12,8 @@ import app.Employee;
 import app.EmployeeRepository;
 import app.Review;
 import app.ReviewRepository;
+import java.util.Set;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path="employees")
@@ -68,7 +70,17 @@ public class EmployeeController {
     @CrossOrigin(origins = "http://localhost:9010")
     @GetMapping(path="/delete")
     public @ResponseBody Iterable<Employee> deleteEmployee(@RequestParam Integer employeeId) {
+        Employee e = EmployeeRepository.findOne(employeeId);
+        Set<Review> assignedReviews = e.getAssignedReviews();
+
+        for(Review r : assignedReviews) {
+            Review s = ReviewRepository.findOne(r.getId());
+            Set<Employee> assignedReviewers = s.getAssignedReviewers();
+            assignedReviewers.remove(e);
+        }
+
         EmployeeRepository.delete(employeeId);
-        return this.getAllEmployees();
+
+       return this.getAllEmployees();
     }
 }

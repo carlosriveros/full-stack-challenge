@@ -14,7 +14,6 @@ class ReviewEditor extends Component {
         this.state= {
             selectedReview: this.props.review,
             selectedReviewerOption: null,
-            updatedReviewBody: null,
             updatedReviewCompleted: this.props.review.completed,
             updatedReviewBody: this.props.review.body
         }
@@ -27,8 +26,8 @@ class ReviewEditor extends Component {
         if(this.state.selectedReviewerOption) {
             url = url + 'reviewerId=' + this.state.selectedReviewerOption.split(" ")[0] + '&';
         }
-        if(this.state.selectedReview.body) {
-            url = url + 'body=' + this.state.selectedReview.body+ '&';
+        if(this.state.updatedReviewBody) {
+            url = url + 'body=' + this.state.updatedReviewBody+ '&';
         }
         if(this.state.updatedReviewCompleted) {
             url = url + 'completed=yes&';
@@ -73,7 +72,7 @@ class ReviewEditor extends Component {
 
 
             <h3>Write your review below.</h3>
-            <textarea style={styles.reviewEditBody} value={this.state.updatedReviewBody} onChange={(e) => {
+            <textarea className="mui-textfield" style={styles.reviewEditBody} value={this.state.updatedReviewBody} onChange={(e) => {
                 this.setState({updatedReviewBody:e.target.value
                 })
             }} placeholder="enter your review here"></textarea>
@@ -98,14 +97,13 @@ class ReviewEditor extends Component {
                            checked={this.state.updatedReviewCompleted}
                            ref="complete"
                            onChange={(e) => {
-                               console.log('e', e.target.checked)
                                this.setState({updatedReviewCompleted: e.target.checked})
                            }}
                     />
                 </label>
             </div>
 
-            <MuiButton color="primary" onClick={() => this.updateReview()}>update employee</MuiButton>
+            <MuiButton color="primary" onClick={() => this.updateReview()}>update review</MuiButton>
         </div>)
     }
 

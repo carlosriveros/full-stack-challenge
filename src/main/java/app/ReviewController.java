@@ -58,14 +58,9 @@ public class ReviewController {
             body = n.getBody();
         }
 
-
-
         if(completed == null) {
             completed = n.getCompleted();
         }
-
-        System.out.println("body: " + body);
-        System.out.println("completed: " + completed);
 
         n.setBody(body);
         n.setCompleted(completed);
@@ -95,7 +90,6 @@ public class ReviewController {
         }
 
         ReviewRepository.save(n);
-
 
         return this.getAllReviews();
     }

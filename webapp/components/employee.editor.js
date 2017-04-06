@@ -21,20 +21,18 @@ class EmployeeEditor extends Component {
                 id: null
             }
         }
-
     }
-
 
     updateEmployee() {
         this.props.updateEmployee(this.state.newEmployee)
     }
 
     deleteEmployee() {
-        this.props.deleteEmployee(this.state.selectedEmployee.id)
+        console.log('this.props', this.props)
+        this.props.deleteEmployee(this.props.employee.id)
     }
 
     render() {
-
         const styles = {
             input: {
                 color: 'blue',
@@ -47,7 +45,6 @@ class EmployeeEditor extends Component {
 
             <h2>Updating employee: {this.props.employee.name}</h2>
 
-
             <Input style={styles.input} hint="Enter new name"  onChange={(e) => {
                 if(e.target.value) {
                     this.setState({newEmployee: { name: e.target.value,
@@ -56,11 +53,8 @@ class EmployeeEditor extends Component {
             }}/>
             <MuiButton color="primary" onClick={() => this.updateEmployee()}>update employee</MuiButton>
             <MuiButton color="primary" onClick={() => this.deleteEmployee()}>delete employee</MuiButton>
-
         </div> )
-
     }
-
 }
 
 EmployeeEditor.PropTypes = {
