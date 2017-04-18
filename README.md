@@ -47,19 +47,15 @@ There is a OneToOne relationship between Employee.Review and Review.reviewee
 
 There is a ManyToMany relationship between Employee.assignedReviews and Review.reviewers
 
-The frontend of the app has two components that are in charge of displaying most of the
-apps functionality: They are employees.js and reviews.js
+The frontend code uses React and Redux.
 
-The app uses React Router to navigate between those two. The other views are showing withing those two components
-using conditional logic.
+The app uses React Router to navigate between react components. 
 
 For Styling I used a lightweight CSS framework called muicss
 
-Had I had more time or had I not needed to implement a backend:
-* I would have created more react components and more routes to separate the UI into more functional components
-* I would have separated the CSS into stylesheets and added it to the bundle using webpack
-* I would have used redux for better state management
-* I would have added test coverage using Enzyme, Tape, and Sinon
+TODO:
+* Separate the CSS into stylesheets and added it to the bundle using webpack
+* Add test coverage using Enzyme, Tape, and Sinon
 
 
 
