@@ -48,7 +48,7 @@ There is a OneToOne relationship between Employee.Review and Review.reviewee
 There is a ManyToMany relationship between Employee.assignedReviews and Review.reviewers
 
 The frontend of the app has two components that are in charge of displaying most of the
-apps functionality: They are employee.list.js and review.list.js
+apps functionality: They are employees.js and reviews.js
 
 The app uses React Router to navigate between those two. The other views are showing withing those two components
 using conditional logic.

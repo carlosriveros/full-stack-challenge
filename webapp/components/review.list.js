@@ -1,46 +1,24 @@
 /**
- * Created by carlosriveros on 2017-03-13.
+ * Created by carlosriveros on 2017-04-03.
  */
-import React, {Component} from 'react'
-import {Input, Button as MuiButton, Dropdown, DropdownItem, Container, Col, Row} from 'muicss/react';
-import {genericHttpCall} from '../http.util'
+import React, {Component, PropTypes} from 'react';
+import { Button as MuiButton, Container, Row, Col} from 'muicss/react';
+import {Link} from 'react-router'
 
-class ReviewList extends Component {
-    constructor(props) {
-        super(props);
+class Reviews extends Component {
 
-        this.state= {
-            reviews: [],
-            newReviewEmployee: 'Select an Employee',
-            employees: [],
-            selectedEmployeeOption: null,
-            selectedReview: null,
-            selectedReviewerOption: null,
-            updatedReviewBody: null,
-            updatedReviewCompleted: null
+    constructor(props){
+        super(props)
+        this.state = {
+            selectedEmployee: null
         }
-
     }
 
+
     componentDidMount() {
-
-        genericHttpCall('reviews/').then(response => {
-            return response.json()
-        }).then(res => {
-            this.setState({reviews: res});
-        }).catch(function(err) {
-            console.log('err', err)
-        });
-
-
-
-        genericHttpCall('employees/').then(response => {
-            return response.json()
-        }).then(res => {
-            this.setState({employees: res});
-        }).catch(function(err) {
-            console.log('err', err)
-        });
+        const {initializeReviewsStore, initializeEmployeesStore} = this.props;
+        initializeReviewsStore();
+        initializeEmployeesStore();
     }
 
     addNewReview() {
@@ -50,50 +28,12 @@ class ReviewList extends Component {
             return;
         }
 
-        const [ id, ...name] = this.state.selectedEmployeeOption.split(" ");
+        const [ id ] = this.state.selectedEmployeeOption.split(" ");
 
-        genericHttpCall('reviews/add?revieweeId=' + id).then(response => {
-            return response.json()
-        }).then(res => {
-            let newReviewList = this.state.reviews;
-            newReviewList.push({body: res.body, id: res.id, completed: res.completed, reviewee: {id: id, name: name.join(" ")}, assignedReviewers: []})
-            this.setState({reviews: newReviewList, selectedEmployeeOption: null});
-        }).catch(function(err) {
-            console.log('err', err)
-        });
-    }
-
-
-    updateReview() {
-
-
-        let id = this.state.selectedReview.review.id;
-
-        let url = '';
-
-        if(this.state.selectedReviewerOption) {
-
-            url = url + 'reviewerId=' + this.state.selectedReviewerOption.split(" ")[0] + '&';
-        }
-
-        if(this.state.selectedReview.review.body) {
-            url = url + 'body=' + this.state.selectedReview.review.body+ '&';
-        }
-
-        if(this.state.updatedReviewCompleted) {
-            url = url + 'completed=yes&';
-        }
-
-        genericHttpCall('reviews/update?id=' + id +"&"+ url).then(response => {
-            return response.json()
-        }).then(res => {
-
-            this.setState({reviews: res, selectedReview: null});
-        }).catch(function(err) {
-            console.log('err', err)
-        });
+        this.props.addReview(id);
 
     }
+
     render() {
 
         const styles = {
@@ -114,82 +54,58 @@ class ReviewList extends Component {
             },
             newReview: {
                 marginBottom: '30px'
-            },
-            reviewEditBody: {
-                width: '300px',
-                height: '200px'
-            },
-            reviewCompleted: {
-                marginTop: '30px 0px'
-            },
-            reviewCompletedCheckbox: {
-                marginLeft: '15px'
             }
         }
 
-        const reviewList = this.state.reviews.map(review => {
+        const reviewList = this.props.reviews.map(review => {
 
             let reviewee = "none";
             if(review.reviewee && review.reviewee.name  ) {
                 reviewee = review.reviewee.name;
             }
 
+            let assignedReviewers = review.assignedReviewers ? review.assignedReviewers.toString() :'none';
 
+            return (<Link key={review.id} to={{
+                pathname: '/reviews/' + review.id
+            }}><Row style={styles.row} onClick={ () => {
 
-            return (<Row style={styles.row} key={review.id} onClick={ () => {
-
-                this.setState({selectedReview: {review}})
+                this.props.selectReview({
+                    name: reviewee,
+                    body: review.body,
+                    completed: review.completed === 'N' ? false : true,
+                    assignedReviewers: assignedReviewers,
+                    reviewee: review.reviewee,
+                    id: review.id
+                })
 
             }}>
                 <Col style={styles.rowItem} md="3">{reviewee}</Col>
                 <Col style={styles.rowItem} md="3">{review.body}</Col>
                 <Col style={styles.rowItem} md="3">{review.completed}</Col>
 
-                <Col style={styles.rowItem} md="3">{review.assignedReviewers.toString() || "none"}</Col>
-            </Row>)
+                <Col style={styles.rowItem} md="3">{assignedReviewers}</Col>
+            </Row></Link>)
         })
 
-        const reviewDropDownItems = this.state.employees.map(employee => {
+        const reviewDropDownItems = this.props.employees.map(employee => {
 
             const value = employee.id  + " " + employee.name;
 
             return (<option key={employee.id} value={value}>{employee.name}</option>)
         })
 
-
-        let currentView = null;
-
-        if(this.state.selectedReview) {
-
-            console.log('selectedReview', this.state.selectedReview)
-
-            let name = this.state.selectedReview.review.reviewee.name;
+        return(<div>
 
 
-            currentView = (<div>
+            <div style={styles.newReview}>
 
-                <a  onClick={()=> {
-                    this.setState({selectedReview: null})
-                }}> &lt; Return to Review List</a>
+                <h3 style={styles.newReviewParagraph}>Select an employee below to create a new review</h3>
 
-                <h2>Reviewee Name: {name}</h2>
-
-
-                <h3>Write your review below.</h3>
-                <textarea style={styles.reviewEditBody} value={this.state.selectedReview.review.body} onChange={(e) => {
-                    this.setState({selectedReview:
-                        {review: {body:  e.target.value
-                                  ,id: this.state.selectedReview.review.id,
-                                    reviewee : this.state.selectedReview.review.reviewee }
-                        }
-                    })
-                }} placeholder="enter your review here"></textarea>
-
-                <h3>Select a reviewer.</h3>
                 <select color="primary" style={styles.select} onChange={ e => {
 
                     if(e.target.value != 0) {
-                        this.setState({selectedReviewerOption: e.target.value})
+                        this.setState({selectedEmployeeOption: e.target.value})
                     }
 
                 }}>
@@ -197,67 +113,40 @@ class ReviewList extends Component {
                     {reviewDropDownItems}
                 </select>
 
-                <div style={styles.reviewCompleted }>
-                    <label >
-                        Review Complete
-                        <input style={styles.reviewCompletedCheckbox}
-                               type="checkbox"
-                               checked={this.state.selectedReview.completed}
-                               ref="complete"
-                               onChange={(e) => {
-                                   console.log('e', e.target.checked)
-                                   this.setState({updatedReviewCompleted: e.target.checked})
-                               }}
-                        />
-                    </label>
-                </div>
+                <MuiButton color="primary" onClick={() => this.addNewReview()}>Create Review</MuiButton>
 
-                <MuiButton color="primary" onClick={() => this.updateReview()}>update employee</MuiButton>
-            </div>)
-        } else {
-            currentView = (<div>
+            </div>
+            <div>
+                <h3 style={styles.newReviewParagraph}>Click on a review to go into it and update it.</h3>
 
+                <Container fluid={true}>
+                    <Row style={Object.assign({},styles.row, {height: '40px'})}>
+                        <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Reviewe</Col>
+                        <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Body</Col>
+                        <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Completed</Col>
 
-                <div style={styles.newReview}>
+                        <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Reviewer Ids</Col>
+                    </Row>
+                    {reviewList}
+                </Container>
 
-                    <h3 style={styles.newReviewParagraph}>Select an employee below to create a new review</h3>
-
-                    <select color="primary" style={styles.select} onChange={ e => {
-
-                        if(e.target.value != 0) {
-                            this.setState({selectedEmployeeOption: e.target.value})
-                        }
-
-                    }}>
-                        <option value="0">Select an employee</option>
-                        {reviewDropDownItems}
-                    </select>
-
-                    <MuiButton color="primary" onClick={() => this.addNewReview()}>Create Review</MuiButton>
-
-                </div>
-                <div>
-                    <h3 style={styles.newReviewParagraph}>Click on a review to go into it and update it.</h3>
-
-                    <Container fluid={true}>
-                        <Row style={Object.assign({},styles.row, {height: '40px'})}>
-                            <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Reviewe</Col>
-                            <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Body</Col>
-                            <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Completed</Col>
-
-                            <Col style={Object.assign({},styles.rowItem, {height: '40px'})} md="3">Reviewer Ids</Col>
-                        </Row>
-                        {reviewList}
-                    </Container>
-
-                </div>
+            </div>
 
 
-            </div>)
-        }
+        </div>)
 
-        return currentView
-    }
+
 }
 
-export default ReviewList;
+}
+
+Reviews.PropTypes = {
+    addReview: React.PropTypes.func,
+    employees: React.PropTypes.array,
+    initializeEmployeesStore: React.PropTypes.func,
+    initializeReviewsStore: React.PropTypes.func,
+    reviews: React.PropTypes.array,
+    selectReview: React.PropTypes.func
+}
+
+export default Reviews;
